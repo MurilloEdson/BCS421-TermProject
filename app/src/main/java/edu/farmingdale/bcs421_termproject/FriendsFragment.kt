@@ -23,7 +23,7 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentFriendsBinding.inflate(layoutInflater, container, false)
         var view : View = binding.root
         val accountFragment = AccountFragment()

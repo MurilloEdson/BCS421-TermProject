@@ -22,7 +22,7 @@ class RecipesFragment : Fragment(R.layout.fragment_recipes) {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentRecipesBinding.inflate(layoutInflater, container, false)
         var view : View = binding.root
         val accountFragment = AccountFragment()

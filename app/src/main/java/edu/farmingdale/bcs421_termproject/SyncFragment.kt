@@ -24,7 +24,7 @@ class SyncFragment : Fragment(R.layout.fragment_sync) {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSyncBinding.inflate(layoutInflater, container, false)
         var view : View = binding.root
         val accountFragment = AccountFragment()

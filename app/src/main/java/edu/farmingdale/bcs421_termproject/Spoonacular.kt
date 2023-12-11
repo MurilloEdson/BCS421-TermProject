@@ -112,7 +112,7 @@ class Spoonacular(
 
             try {
                 // Make the API call to get recipes based on the search query
-                val jsonResponse = Spoonacular.getApiResponse(apiUrl)
+                val jsonResponse = getApiResponse(apiUrl)
 
                 // Parse the JSON response and return a list of recipes
                 return@withContext parseRecipes(jsonResponse)

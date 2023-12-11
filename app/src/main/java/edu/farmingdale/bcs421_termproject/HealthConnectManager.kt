@@ -36,7 +36,7 @@ const val MIN_SUPPORTED_SDK = Build.VERSION_CODES.O_MR1
  * Demonstrates reading and writing from Health Connect.
  */
 class HealthConnectManager(private val context: Context) {
-    public val healthConnectClient by lazy { HealthConnectClient.getOrCreate(context) }
+    val healthConnectClient by lazy { HealthConnectClient.getOrCreate(context) }
 
     var availability = mutableStateOf(HealthConnectAvailability.NOT_SUPPORTED)
         private set

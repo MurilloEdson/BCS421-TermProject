@@ -54,7 +54,7 @@ class FoodFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_food, container, false)
 
-        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
+        ///val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
         // Initialize the adapter with an empty list
@@ -195,7 +195,7 @@ class FoodFragment : Fragment() {
     private fun performSearch(query: String) {
         lifecycleScope.launch(Dispatchers.IO) {
             // Perform the API call and update the UI with the results
-            val recipes = Spoonacular.searchRecipes(query)
+            val recipes = searchRecipes(query)
             Log.d("API_RESPONSE", recipes.toString())
 
             // Update the adapter on the main thread

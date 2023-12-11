@@ -44,11 +44,11 @@ class LoginActivity : AppCompatActivity() {
                         val intent = Intent(this, DashboardActivity::class.java)
                         startActivity(intent)
                     } else {
-                        Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Invalid username and/or password.", Toast.LENGTH_SHORT).show()
                     }
                 }
             } else {
-                Toast.makeText(this, "Empty Fields Are not Allowed !!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "All fields must be filled.", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -61,6 +61,7 @@ class LoginActivity : AppCompatActivity() {
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail().build()
             val client = GoogleSignIn.getClient(this,gso)
+            client.revokeAccess()
             val sIntent = client.signInIntent
             startActivityForResult(sIntent, RC_SIGN_IN)
         }
@@ -72,7 +73,7 @@ class LoginActivity : AppCompatActivity() {
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                val account = task.getResult(ApiException::class.java)!!
+                val account = task.getResult(ApiException::class.java)
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
                 Toast.makeText(this, "Google sign in failed: ${e.message}", Toast.LENGTH_SHORT).show()

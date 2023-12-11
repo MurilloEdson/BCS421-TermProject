@@ -55,25 +55,15 @@ dependencies {
     implementation ("com.google.firebase:firebase-auth:22.3.0")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation ("androidx.health.connect:connect-client:1.1.0-alpha02")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.4")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.4")
-    implementation("com.google.firebase:firebase-firestore-ktx:24.10.0")
+    implementation("com.google.android.gms:play-services-ads:22.6.0")
     testImplementation("junit:junit:4.13.2")
+    implementation("androidx.compose.runtime:runtime-rxjava2:1.5.4")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-    // Add a dependency of Health Connect SDK
-    implementation ("androidx.health.connect:connect-client:1.1.0-alpha06")
-    // Implementation for Compose to allow HealthConnect methods to function
-    implementation ("androidx.compose.ui:ui:1.0.0")
-    implementation ("androidx.activity:activity-compose:1.3.0")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0")
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
-
-    //Glide library to load image urls
-    implementation ("com.github.bumptech.glide:glide:4.12.0")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
 }

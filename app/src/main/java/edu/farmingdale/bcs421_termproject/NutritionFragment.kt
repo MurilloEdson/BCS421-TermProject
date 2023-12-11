@@ -19,7 +19,7 @@ class NutritionFragment : Fragment(R.layout.fragment_nutrition) {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentNutritionBinding.inflate(layoutInflater, container, false)
         var view : View = binding.root
         val accountFragment = AccountFragment()
