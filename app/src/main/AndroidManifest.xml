@@ -31,6 +31,9 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".RegistrationActivity" />
         <activity android:name=".RegistrationActivity2" />
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9823810477001416~4101851363"/>
     </application>
 
 </manifest>

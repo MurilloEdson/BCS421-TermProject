@@ -12,6 +12,8 @@
     <string name="google_storage_bucket" translatable="false">auth-ml-api-demo.appspot.com</string>
     <string name="project_id" translatable="false">auth-ml-api-demo</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="banner_ad_unit_id">ca-app-pub-9823810477001416~4101851363</string>
+    <string name="temporary_test_banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
     <string-array name="sex_options">
         <item>Male</item>
         <item>Female</item>
