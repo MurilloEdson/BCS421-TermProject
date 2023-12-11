@@ -13,7 +13,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/bitbowl_loginregistration_bg"
-        app:layout_constraintBottom_toTopOf="@+id/heightTV"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -48,9 +48,7 @@
         android:text="Height (in inches)"
         android:textColor="#000000"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/heightET"
         app:layout_constraintEnd_toEndOf="@id/guideline5"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/blueBackground" />
 
@@ -65,9 +63,7 @@
         android:textColor="#252525"
         android:textColorHighlight="@color/bb_blue"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/weightTV"
         app:layout_constraintEnd_toEndOf="@id/guideline5"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/heightTV" />
 
@@ -78,9 +74,7 @@
         android:text="Weight (in pounds)"
         android:textColor="#000000"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/weightET"
         app:layout_constraintEnd_toEndOf="@id/guideline5"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/heightET" />
 
@@ -94,9 +88,7 @@
         android:padding="10dp"
         android:textColor="#252525"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/dobTV"
         app:layout_constraintEnd_toEndOf="@id/guideline5"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/weightTV" />
 
@@ -107,9 +99,7 @@
         android:text="Date of Birth (MM/DD/YYYY)"
         android:textColor="#000000"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/dobET"
         app:layout_constraintEnd_toEndOf="@id/guideline5"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/weightET" />
 
@@ -123,9 +113,7 @@
         android:padding="10dp"
         android:textColor="#252525"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/activityTV"
         app:layout_constraintEnd_toEndOf="@id/guideline5"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/dobTV" />
 
@@ -135,7 +123,6 @@
         android:layout_height="wrap_content"
         android:text="Sex"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/sexSpinner"
         app:layout_constraintStart_toStartOf="@id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/activitySpinner" />
 
@@ -146,7 +133,6 @@
         android:background="@drawable/rounded_edittext"
         android:clickable="true"
         android:padding="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/completeButton"
         app:layout_constraintStart_toStartOf="@id/sexTV"
         app:layout_constraintTop_toBottomOf="@+id/sexTV" />
 
@@ -156,19 +142,18 @@
         android:layout_height="wrap_content"
         android:text="Activity Level"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/activitySpinner"
         app:layout_constraintStart_toStartOf="@id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/dobET" />
 
     <Spinner
         android:id="@+id/activitySpinner"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_edittext"
         android:clickable="true"
         android:padding="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/sexTV"
-        app:layout_constraintStart_toStartOf="@id/sexTV"
+        app:layout_constraintStart_toStartOf="@id/guideline4"
+        app:layout_constraintEnd_toEndOf="@id/guideline5"
         app:layout_constraintTop_toBottomOf="@+id/activityTV" />
 
     <Button
@@ -180,9 +165,7 @@
         android:text="Complete sign up"
         android:textColor="@color/white"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/guideline5"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/sexSpinner" />
 
@@ -206,7 +189,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.40" />
+        app:layout_constraintGuide_begin="293dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline4"
