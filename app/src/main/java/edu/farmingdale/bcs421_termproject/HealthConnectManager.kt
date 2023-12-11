@@ -67,9 +67,7 @@ class HealthConnectManager(private val context: Context) {
         return PermissionController.createRequestPermissionResultContract()
     }
 
-    /**
-     * TODO: Writes [WeightRecord] to Health Connect.
-     */
+    // Writes [WeightRecord] to Health Connect
     suspend fun writeWeightInput(weightInput: Double) {
         val time = ZonedDateTime.now().withNano(0)
         val weightRecord = WeightRecord(
@@ -86,9 +84,7 @@ class HealthConnectManager(private val context: Context) {
         }
     }
 
-    /**
-     * TODO: Reads in existing [WeightRecord]s.
-     */
+    // Reads in existing [WeightRecord]s.
     suspend fun readWeightInputs(start: Instant, end: Instant): List<WeightRecord> {
         val request = ReadRecordsRequest(
             recordType = WeightRecord::class,
@@ -98,9 +94,7 @@ class HealthConnectManager(private val context: Context) {
         return response.records
     }
 
-    /**
-     * TODO: Returns the weekly average of [WeightRecord]s.
-     */
+    // TODO: Returns the weekly average of [WeightRecord]s.
     suspend fun computeWeeklyAverage(start: Instant, end: Instant): Mass? {
         val request = AggregateRequest(
             metrics = setOf(WeightRecord.WEIGHT_AVG),
