@@ -1,27 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".FoodFragment"
+    android:padding="8dp">
+    <!-- Search bar -->
+    <EditText
+        android:id="@+id/searchEditText"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:hint="Search Recipes"
+        android:inputType="text"
+        android:imeOptions="actionDone"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@id/searchButton"
+        android:background="@drawable/round_outline"/>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline8"
+    <!-- Search button -->
+    <Button
+        android:id="@+id/searchButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.05" />
+        android:text="Search"
+        android:layout_toEndOf="@id/searchEditText"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/round_button"/>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.95" />
+    <!-- RecyclerView to display recipes -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/searchEditText"
+        android:layout_marginTop="8dp" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.02" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

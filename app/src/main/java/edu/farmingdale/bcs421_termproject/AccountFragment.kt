@@ -1,32 +1,31 @@
 package edu.farmingdale.bcs421_termproject
 
 import android.content.Intent
-import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import com.google.firebase.auth.FirebaseAuth
 import edu.farmingdale.bcs421_termproject.databinding.FragmentAccountBinding
+import edu.farmingdale.bcs421_termproject.ProgressFragment
 
 private lateinit var binding: FragmentAccountBinding
+private lateinit var firebaseAuth: FirebaseAuth
 class AccountFragment : Fragment(R.layout.fragment_account) {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentAccountBinding.inflate(layoutInflater, container, false)
         var view :View = binding.root
+        firebaseAuth = FirebaseAuth.getInstance()
 
         val personalInfoButton = view.findViewById<Button>(R.id.infoButton)
         val bodyMeasurementsButton = view.findViewById<Button>(R.id.measurementsButton)
@@ -124,6 +123,7 @@ class AccountFragment : Fragment(R.layout.fragment_account) {
         logOutButton.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
             startActivity(Intent(requireActivity(), LoginActivity::class.java))
+            firebaseAuth.signOut()
         }
         return view
     }

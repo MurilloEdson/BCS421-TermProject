@@ -18,7 +18,7 @@ class PersonalInformationFragment : Fragment(R.layout.fragment_personal_informat
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentPersonalInformationBinding.inflate(layoutInflater, container, false)
         var view : View = binding.root
         val accountFragment = AccountFragment()

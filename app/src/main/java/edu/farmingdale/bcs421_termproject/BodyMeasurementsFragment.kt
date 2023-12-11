@@ -27,7 +27,7 @@ class BodyMeasurementsFragment : Fragment(R.layout.fragment_body_measurements) {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentBodyMeasurementsBinding.inflate(layoutInflater, container, false)
         var view : View = binding.root
         val accountFragment = AccountFragment()

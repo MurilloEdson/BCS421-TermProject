@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BCS421_TermProject</string>
+    <string name="app_name">BitBowl</string>
     <string name="title_activity_dashboard">Dashboard</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>

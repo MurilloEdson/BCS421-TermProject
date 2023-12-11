@@ -44,7 +44,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
         var view :View = binding.root
         // Load an ad

@@ -34,7 +34,7 @@ class RegistrationActivity2 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.registration_activity2)
-        var email = getIntent().getStringExtra("email") // Get email passed through the intent
+        var email = intent.getStringExtra("email") // Get email passed through the intent
         auth = FirebaseAuth.getInstance()
         val db = FirebaseFirestore.getInstance()
         // Programatically adjust status bar color since we use multiple colors throughout the app
@@ -82,7 +82,7 @@ class RegistrationActivity2 : AppCompatActivity() {
                 if (checkDOB(dob)) {
                     // Get the last 4 digits of DOB and do the math for the user's current age
                     val lastDigits = dob.takeLast(4).toInt()
-                    val currentYear = Calendar.getInstance().get(Calendar.YEAR);
+                    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
                     val age = currentYear - lastDigits
 
                     // Calculate calories and macros
