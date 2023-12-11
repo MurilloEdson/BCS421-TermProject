@@ -12,7 +12,6 @@ class DashboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dashboard_activity)
-
         // Programatically adjust status bar color since we use multiple colors throughout the app
         if (Build.VERSION.SDK_INT >= 21) {
             val window = this.window

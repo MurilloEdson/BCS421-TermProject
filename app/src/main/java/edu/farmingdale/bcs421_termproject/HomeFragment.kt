@@ -1,17 +1,19 @@
 package edu.farmingdale.bcs421_termproject
 
+import android.adservices.common.AdData
 import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateInterpolator
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -20,6 +22,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import com.google.android.gms.ads.MobileAds
 
 private lateinit var binding: FragmentHomeBinding
 
@@ -32,7 +35,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     val cal = Calendar.getInstance()
     val dateFormat = SimpleDateFormat("MM-dd-yyyy")
     val todaysDateFormatted = dateFormat.format(cal.time) // Today's date formatted for the Firebase methods
-
     lateinit var caloriesProgressCircle: ProgressBar
     lateinit var proteinProgressCircle: ProgressBar
     lateinit var carbsProgressCircle: ProgressBar
@@ -45,7 +47,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     ): View? {
         binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
         var view :View = binding.root
-
+        // Load an ad
+        MobileAds.initialize(requireActivity()) {}
+        val adView : AdView = view.findViewById(R.id.adView)
+        val adRequest: AdRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
         // Calories card
         caloriesProgressCircle = view.findViewById<ProgressBar>(R.id.caloriesProgress)
         val caloriesText = view.findViewById<TextView>(R.id.caloriesProgressTV)
