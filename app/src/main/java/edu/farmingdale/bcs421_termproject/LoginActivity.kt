@@ -44,11 +44,11 @@ class LoginActivity : AppCompatActivity() {
                         val intent = Intent(this, DashboardActivity::class.java)
                         startActivity(intent)
                     } else {
-                        Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Invalid username and/or password.", Toast.LENGTH_SHORT).show()
                     }
                 }
             } else {
-                Toast.makeText(this, "Empty Fields Are not Allowed !!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "All fields must be filled.", Toast.LENGTH_SHORT).show()
             }
         }
 
