@@ -95,35 +95,17 @@ class AccountFragment : Fragment(R.layout.fragment_account) {
             }
         }
 
-
-        syncButton.setOnClickListener {
-            val packageName = "edu.farmingdale.bcs421_termproject"
-
-            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-            intent.data = Uri.parse("package:$packageName")
-
-            if (intent.resolveActivity(requireActivity().packageManager) != null) {
-                // Check if the required permissions are granted
-                if (arePermissionsGranted()) {
-                    // Permissions are granted, navigate to SyncFragment
-                    parentFragmentManager.beginTransaction().apply {
-                        replace(R.id.frameLayout, syncFragment)
-                        commit()
-                    }
-                } else {
-                    // Permissions are not granted, open app settings
-                    startActivity(intent)
-                }
-            } else {
-                // Handle the case where there's no activity to handle the intent
-                // You can show a toast or a message to inform the user
-            }
-        }
-
         logOutButton.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
             startActivity(Intent(requireActivity(), LoginActivity::class.java))
             firebaseAuth.signOut()
+        }
+
+        syncButton.setOnClickListener {
+            val packageName = "edu.farmingdale.bcs421_termproject"
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            intent.data = Uri.parse("package:$packageName")
+            startActivity(intent)
         }
         return view
     }
