@@ -16,7 +16,7 @@ import edu.farmingdale.bcs421_termproject.databinding.FragmentAccountBinding
 import edu.farmingdale.bcs421_termproject.ProgressFragment
 
 private lateinit var binding: FragmentAccountBinding
-private lateinit var firebaseAuth: FirebaseAuth
+lateinit var firebaseAuth: FirebaseAuth
 class AccountFragment : Fragment(R.layout.fragment_account) {
 
     override fun onCreateView(
