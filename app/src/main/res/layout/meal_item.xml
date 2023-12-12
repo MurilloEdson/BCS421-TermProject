@@ -44,9 +44,11 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginTop="16dp"/>
+
     <Button
         android:id="@+id/mealDeleteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete Entry"/>
+        android:backgroundTint="@color/bb_blue"
+        android:text="Delete Entry" />
 </LinearLayout>

@@ -78,6 +78,7 @@ class FoodFragment : Fragment() {
 
         val searchButton: Button = view.findViewById(R.id.searchButton)
         val searchEditText: EditText = view.findViewById(R.id.searchEditText)
+        val addButton: Button = view.findViewById(R.id.addBtn)
 
         searchButton.setOnClickListener {
             val query = searchEditText.text.toString()
@@ -88,6 +89,13 @@ class FoodFragment : Fragment() {
             }
         }
 
+        addButton.setOnClickListener {
+            val addFoodFragment = AddFoodFragment()
+            parentFragmentManager.beginTransaction().apply {
+                replace(R.id.frameLayout, addFoodFragment)
+                commit()
+            }
+        }
         return view
     }
 
