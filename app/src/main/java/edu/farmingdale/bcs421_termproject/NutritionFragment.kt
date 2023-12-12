@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -111,6 +112,7 @@ class MealItemAdapter : RecyclerView.Adapter<MealItemAdapter.MealItemViewHolder>
 
     override fun onBindViewHolder(holder: MealItemViewHolder, position: Int) {
         val mealItem = mealItems[position]
+        holder.setAdapter(this)
         holder.bind(mealItem)
     }
 
@@ -132,7 +134,13 @@ class MealItemAdapter : RecyclerView.Adapter<MealItemAdapter.MealItemViewHolder>
         private val fatTextView: TextView = itemView.findViewById(R.id.fatTextView)
         private val mealTextView: TextView = itemView.findViewById(R.id.mealTextView)
         private val mealImageView: ImageView = itemView.findViewById(R.id.mealImageView)
+        private val mealDeleteButton: Button = itemView.findViewById(R.id.mealDeleteButton)
+        private var mealItems: List<MealItem> = emptyList()
+        private lateinit var adapter: MealItemAdapter
 
+        fun setAdapter(adapter: MealItemAdapter) {
+            this.adapter = adapter
+        }
         fun bind(mealItem: MealItem) {
             titleTextView.text = mealItem.title
             caloriesTextView.text = "Calories: ${mealItem.calories}"
@@ -145,6 +153,46 @@ class MealItemAdapter : RecyclerView.Adapter<MealItemAdapter.MealItemViewHolder>
             Glide.with(itemView)
                 .load(mealItem.imageUrl)
                 .into(mealImageView)
+
+            // Set click listener for delete button
+            mealDeleteButton.setOnClickListener {
+                // Call a function to delete the meal from Firestore
+                deleteMealFromFirestore(mealItem.id)
+            }
+        }
+
+        private fun deleteMealFromFirestore(mealId: Int) {
+            val db = FirebaseFirestore.getInstance()
+            val firebaseAuth = FirebaseAuth.getInstance()
+
+            val cal = Calendar.getInstance()
+            val dateFormat = SimpleDateFormat("MM-dd-yyyy")
+            val formattedDateString = dateFormat.format(cal.time)
+
+            // Delete the meal from Firestore
+            db.collection("Users")
+                .document(firebaseAuth.currentUser?.email.toString())
+                .collection("Food")
+                .document(formattedDateString)
+                .collection("Meals")
+                .whereEqualTo("id", mealId)
+                .get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents) {
+                        document.reference.delete()
+                        Log.d("DELETE_MEAL", "Meal successfully deleted from Firestore!")
+
+                        // Remove the deleted item from the local mealItems list
+                        val updatedMealItems = mealItems.toMutableList()
+                        updatedMealItems.removeAll { it.id == mealId }
+                        mealItems = updatedMealItems
+                        // Notify the adapter that the dataset has changed
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.w("DELETE_MEAL", "Error deleting meal from Firestore", e)
+                }
         }
     }
 }
