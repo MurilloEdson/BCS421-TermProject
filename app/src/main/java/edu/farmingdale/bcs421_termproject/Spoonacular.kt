@@ -161,14 +161,12 @@ class Spoonacular(
         }
 
 
-        // Get multiple random recipes
+        // Get n random recipes
         suspend fun getRandRecipes(numRecipes: Int): List<Spoonacular> {
             val recipes = mutableListOf<Spoonacular>()
 
             repeat(numRecipes) {
                 getRandRecipe()?.let { jsonObject ->
-                    // Print the JSON response
-                    println(jsonObject.toString())
 
                     try {
                         val id = jsonObject.getInt("id")
@@ -179,7 +177,6 @@ class Spoonacular(
                         val readyInMinutes = jsonObject.getInt("readyInMinutes")
                         val servings = jsonObject.getInt("servings")
 
-                        // val nutrition = Spoonacular.Nutrition(0.0, 0.0, 0.0, 0.0)
                         // Extract nutritional information
                         val nutritionObject = jsonObject.optJSONObject("nutrition")
                         val nutrientsArray = nutritionObject?.optJSONArray("nutrients")

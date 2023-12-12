@@ -1,5 +1,6 @@
 package edu.farmingdale.bcs421_termproject
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,16 +12,22 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import edu.farmingdale.bcs421_termproject.Spoonacular.Companion.searchRecipes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,7 +45,7 @@ class FoodFragment : Fragment() {
     private var param2: String? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: RecipeAdapter
-    val db = FirebaseFirestore.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,14 +61,14 @@ class FoodFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_food, container, false)
 
-        ///val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
+        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
         // Initialize the adapter with an empty list
         adapter = RecipeAdapter(emptyList())
         recyclerView.adapter = adapter
 
-        // Fetch and display 3 random recipes
+        // Fetch and display random recipes of size n
         lifecycleScope.launch {
             val recipes = withContext(Dispatchers.IO) {
                 Spoonacular.getRandRecipes(1)
@@ -78,7 +85,6 @@ class FoodFragment : Fragment() {
                 performSearch(query)
             } else {
                 // Handle empty query if needed
-                // For example, show a toast or provide user feedback
             }
         }
 
@@ -118,7 +124,6 @@ class FoodFragment : Fragment() {
         override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
             val recipe = recipes[position]
             holder.bind(recipe)
-            Log.d("BIND_METHOD", "Data bound for recipe: ${recipe.title}")
         }
 
         override fun getItemCount(): Int {
@@ -139,27 +144,76 @@ class FoodFragment : Fragment() {
             private val servingsTextView: TextView = itemView.findViewById(R.id.servingsTextView)
             private val fab: FloatingActionButton = itemView.findViewById(R.id.fab)
             private var recipeId = 1
+            private var calories = 0.0
+            private var fat = 0.0
+            private var carbs = 0.0
+            private var protein = 0.0
+            private var recipeImage = ""
 
+            val cal = Calendar.getInstance()
+            val dateFormat = SimpleDateFormat("MM-dd-yyyy")
+            val formattedDateString = dateFormat.format(cal.time)
             init {
                 // Enable JavaScript in the WebView
                 descriptionWebView.settings.javaScriptEnabled = true
 
                 // Add click listener to the FAB
                 fab.setOnClickListener {
-                    /* Add food data to the Food collection
-                    db.collection("Users").document(email).collection("Food").document("Put date here")
-                        .set("Put hashMap data here")
-                        .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
-                        .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
-                    */
+                    val options = arrayOf("Breakfast", "Lunch", "Dinner")
+                    var checkedItem = 0 // Default checked item
 
-                    // Create a JsonObject and output it to the console
-                    // val recipeJsonObject = createRecipeJsonObject()
-                    // Log.d("FAB_CLICK", "Recipe JSON: $recipeJsonObject")
+                    val builder = AlertDialog.Builder(itemView.context)
+                    builder.setTitle("Select a meal")
+                        .setSingleChoiceItems(options, checkedItem) { _, which ->
+                            checkedItem = which
+                        }
+                        .setPositiveButton("OK") { _, _ ->
+                            // Handle OK button click
+                            val selectedMeal = options[checkedItem]
+
+                            // Add food data to the "Food" collection for the current date
+                            val foodData = hashMapOf(
+                                "id" to recipeId,
+                                "title" to titleTextView.text.toString(),
+                                "calories" to calories,
+                                "carbs" to carbs,
+                                "protein" to protein,
+                                "fat" to fat,
+                                "meal" to selectedMeal,
+                                "imageUrl" to recipeImage
+                            )
+
+                            val db = FirebaseFirestore.getInstance()
+                            val firebaseAuth = FirebaseAuth.getInstance()
+                            val userDocument = db.collection("Users")
+                                .document(firebaseAuth.currentUser?.email.toString())
+                            val mealsCollection = userDocument.collection("Food")
+                            val dateDocument = mealsCollection.document(formattedDateString) // Assuming formattedDateString is the current date
+
+                            // Add food data to the "Food" collection for the current date
+                            dateDocument.collection("Meals") // New collection for each date
+                                .add(foodData)
+                                .addOnSuccessListener { mealDocumentReference ->
+                                    Log.d("FAB_CLICK", "Food data successfully added to Firestore!")
+
+                                    // Update progress data in the progress document directly
+                                    val progressDocument = userDocument.collection("Progress").document(formattedDateString)
+                                    progressDocument.update("calories-today", FieldValue.increment(calories))
+                                    progressDocument.update("carbs-today", FieldValue.increment(carbs))
+                                    progressDocument.update("protein-today", FieldValue.increment(protein))
+                                    progressDocument.update("fat-today", FieldValue.increment(fat))
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.w("FAB_CLICK", "Error adding food data to Firestore", e)
+                                }
+                        }
+                        .setNegativeButton("Cancel") { dialog, _ ->
+                            // Cancel button click
+                            dialog.dismiss()
+                        }
+                    builder.create().show()
                 }
             }
-
-
 
             fun bind(recipe: Spoonacular) {
                 titleTextView.text = recipe.title
@@ -167,27 +221,20 @@ class FoodFragment : Fragment() {
                 descriptionWebView.loadData(recipe.description, "text/html", "UTF-8")
 
                 // Load image into ImageView using Glide
+                recipeImage = recipe.image
                 Glide.with(itemView)
                     .load(recipe.image)
                     .into(recipeImageView)
 
-                // Set Ready In Minutes and Servings
-                readyInMinutesTextView.text = "Ready In Minutes: ${recipe.readyInMinutes}"
+                readyInMinutesTextView.text = "Calories: ${recipe.nutrition.calories}"
                 servingsTextView.text = "Servings: ${recipe.servings}"
                 recipeId = recipe.id
-                println(recipe.nutrition)
-                Log.d("BIND_METHOD", "Data bound for recipe: ${recipe.title}")
-            }
+                calories = recipe.nutrition.calories
+                fat = recipe.nutrition.fat
+                carbs = recipe.nutrition.carbohydrates
+                protein = recipe.nutrition.protein
 
-            private fun createRecipeJsonObject(): JSONObject {
-                val recipeJsonObject = JSONObject()
-                recipeJsonObject.put("id", recipeId)
-                recipeJsonObject.put("title", titleTextView.text.toString())
-                recipeJsonObject.put("description", descriptionWebView.url) // You may need to adjust this based on the actual data in the WebView
-                recipeJsonObject.put("image", recipeImageView.contentDescription) // You may need to adjust this based on the actual data in the ImageView
-                recipeJsonObject.put("readyInMinutes", readyInMinutesTextView.text.toString())
-                recipeJsonObject.put("servings", servingsTextView.text.toString())
-                return recipeJsonObject
+                println(recipe.nutrition)
             }
         }
     }
@@ -196,7 +243,6 @@ class FoodFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             // Perform the API call and update the UI with the results
             val recipes = searchRecipes(query)
-            Log.d("API_RESPONSE", recipes.toString())
 
             // Update the adapter on the main thread
             withContext(Dispatchers.Main) {
