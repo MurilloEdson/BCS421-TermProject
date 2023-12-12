@@ -32,7 +32,6 @@ class RegistrationActivity : AppCompatActivity() {
         val signUpButton = findViewById<Button>(R.id.signUpButton)
         val emailEditText = findViewById<EditText>(R.id.emailEditText)
         val passwordEditText = findViewById<EditText>(R.id.passwordEditText)
-        val cPasswordEditText = findViewById<EditText>(R.id.cPasswordEditText)
 
         // Move to registration activity
         loginButton.setOnClickListener {
@@ -42,89 +41,83 @@ class RegistrationActivity : AppCompatActivity() {
         signUpButton.setOnClickListener {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
-            val cPassword = cPasswordEditText.text.toString()
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                if(password == cPassword){
-                    auth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(this) { task ->
-                            if (task.isSuccessful) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d(TAG, "signInWithEmail:success")
-                                val user = auth.currentUser
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success")
+                            val user = auth.currentUser
 
-                                // Setting up the new user's data fields in their unique document
-                                val mainData = hashMapOf(
-                                    "email" to email,
-                                    "height" to 0,
-                                    "weight" to 0,
-                                    "age" to 0,
-                                    "date-of-birth" to "none",
-                                    "sex" to "none",
-                                    "calorie-goal" to 0,
-                                    "protein-goal" to 0,
-                                    "carbs-goal" to 0,
-                                    "fat-goal" to 0,
-                                    "steps-goal" to 0,
-                                    "signed-in-before" to false
-                                )
+                            // Setting up the new user's data fields in their unique document
+                            val mainData = hashMapOf(
+                                "email" to email,
+                                "height" to 0,
+                                "weight" to 0,
+                                "age" to 0,
+                                "date-of-birth" to "none",
+                                "sex" to "none",
+                                "calorie-goal" to 0,
+                                "protein-goal" to 0,
+                                "carbs-goal" to 0,
+                                "fat-goal" to 0,
+                                "steps-goal" to 0
+                            )
 
-                                // Setting up the new user's food data. Empty at first as they have not added any food.
-                                val foodData = hashMapOf(
-                                    "first-food-entry" to true // This is just to get some data in the hash map so it can work with Firebase's methods.
-                                )
+                            // Setting up the new user's food data. Empty at first as they have not added any food.
+                            val foodData = hashMapOf(
+                                "first-food-entry" to true // This is just to get some data in the hash map so it can work with Firebase's methods.
+                            )
 
-                                // Setting up the user's daily goal data. Starts at 0 as they have not entered calories/macros for the day.
-                                val progressData = hashMapOf(
-                                    "calories-today" to 0,
-                                    "protein-today" to 0,
-                                    "carbs-today" to 0,
-                                    "fat-today" to 0,
-                                    "steps-today" to 0,
-                                    "calories-burned-today" to 0,
-                                    "exercise-time-today" to 0
-                                )
+                            // Setting up the user's daily goal data. Starts at 0 as they have not entered calories/macros for the day.
+                            val progressData = hashMapOf(
+                                "calories-today" to 0,
+                                "protein-today" to 0,
+                                "carbs-today" to 0,
+                                "fat-today" to 0,
+                                "steps-today" to 0,
+                                "calories-burned-today" to 0,
+                                "exercise-time-today" to 0
+                            )
 
-                                // Used for getting today's date in a specific format as the name of the documents in the Food and Goals collections.
-                                val cal = Calendar.getInstance()
-                                val dateFormat = SimpleDateFormat("MM-dd-yyyy")
-                                val todaysDateFormatted = dateFormat.format(cal.time)
+                            // Used for getting today's date in a specific format as the name of the documents in the Food and Goals collections.
+                            val cal = Calendar.getInstance()
+                            val dateFormat = SimpleDateFormat("MM-dd-yyyy")
+                            val todaysDateFormatted = dateFormat.format(cal.time)
 
-                                // Create a new user document with their unique email address as the name of the document
-                                db.collection("Users").document(email)
-                                    .set(mainData)
-                                    .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
-                                    .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
+                            // Create a new user document with their unique email address as the name of the document
+                            db.collection("Users").document(email)
+                                .set(mainData)
+                                .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+                                .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
 
-                                // Create the food collection to be populated later
-                                db.collection("Users").document(email).collection("Food").document(todaysDateFormatted)
-                                    .set(foodData)
-                                    .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
-                                    .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
+                            // Create the food collection to be populated later
+                            db.collection("Users").document(email).collection("Food").document(todaysDateFormatted)
+                                .set(foodData)
+                                .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+                                .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
 
-                                // Create the goals collection to be populated later
-                                db.collection("Users").document(email).collection("Progress").document(todaysDateFormatted)
-                                    .set(progressData)
-                                    .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
-                                    .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
+                            // Create the goals collection to be populated later
+                            db.collection("Users").document(email).collection("Progress").document(todaysDateFormatted)
+                                .set(progressData)
+                                .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+                                .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
 
-                                //  Go to second registration activity. Pass through the email to use for firebase methods in next activity.
-                                val intent = Intent(this, RegistrationActivity2::class.java)
-                                intent.putExtra("email", email)
-                                startActivity(intent)
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "signInWithEmail:failure", task.exception)
-                                Toast.makeText(
-                                    baseContext,
-                                    "Emails must be unique and passwords must be at least 6 characters long.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                            //  Go to second registration activity. Pass through the email to use for firebase methods in next activity.
+                            val intent = Intent(this, RegistrationActivity2::class.java)
+                            intent.putExtra("email", email)
+                            startActivity(intent)
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.exception)
+                            Toast.makeText(
+                                baseContext,
+                                "Emails must be unique and passwords must be at least 6 characters long.",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
-                }else{
-                    Toast.makeText(this, "Passwords Must Match", Toast.LENGTH_SHORT).show()
-                }
+                    }
             } else {
                 Toast.makeText(this, "All fields must be filled.", Toast.LENGTH_SHORT).show()
             }

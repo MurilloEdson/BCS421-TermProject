@@ -98,8 +98,7 @@ class RegistrationActivity2 : AppCompatActivity() {
                         "protein-goal" to listOfCaloriesAndMacros[1],
                         "carbs-goal" to listOfCaloriesAndMacros[2],
                         "fat-goal" to listOfCaloriesAndMacros[3],
-                        "steps-goal" to 5000,
-                        "signed-in-before" to true
+                        "steps-goal" to 5000
                     )
 
                     // Update the user's document with their maintenance calorie and macro goals
