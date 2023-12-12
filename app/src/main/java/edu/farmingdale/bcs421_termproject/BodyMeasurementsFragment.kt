@@ -39,6 +39,7 @@ class BodyMeasurementsFragment : Fragment(R.layout.fragment_body_measurements) {
             }
         }
 
+
         // Code to pull the user's height and weight data from Firestore.
 
         val heightEditText = view.findViewById<EditText>(R.id.heightET)
