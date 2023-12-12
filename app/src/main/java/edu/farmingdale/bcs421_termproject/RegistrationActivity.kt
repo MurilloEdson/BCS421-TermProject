@@ -62,8 +62,7 @@ class RegistrationActivity : AppCompatActivity() {
                                 "protein-goal" to 0,
                                 "carbs-goal" to 0,
                                 "fat-goal" to 0,
-                                "steps-goal" to 0,
-                                "signed-in-before" to false
+                                "steps-goal" to 0
                             )
 
                             // Setting up the new user's food data. Empty at first as they have not added any food.
