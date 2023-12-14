@@ -25,7 +25,7 @@ class Spoonacular(
     var nutrition: Nutrition
 ) {
     companion object {
-        private const val apiKey = "apiKey=ad69717dadc6439588a0d061fcc6e17c"
+        private const val apiKey = "apiKey=7089afb084ac4235a7014fa58ba91a18"
         private val recipeList = mutableListOf<Spoonacular>()
 
 

@@ -1,6 +1,5 @@
 package edu.farmingdale.bcs421_termproject
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,7 +11,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +24,6 @@ import edu.farmingdale.bcs421_termproject.Spoonacular.Companion.searchRecipes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
@@ -65,13 +63,13 @@ class FoodFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
         // Initialize the adapter with an empty list
-        adapter = RecipeAdapter(emptyList())
+        adapter = RecipeAdapter(emptyList(), this)
         recyclerView.adapter = adapter
 
         // Fetch and display random recipes of size n
         lifecycleScope.launch {
             val recipes = withContext(Dispatchers.IO) {
-                Spoonacular.getRandRecipes(1)
+                Spoonacular.getRandRecipes(3)
             }
             adapter.setRecipes(recipes)
         }
@@ -120,8 +118,14 @@ class FoodFragment : Fragment() {
     }
 
 
-    class RecipeAdapter(private var recipes: List<Spoonacular>) :
+    class RecipeAdapter(private var recipes: List<Spoonacular>,
+                        private val clickListener: FoodFragment
+    ) :
         RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
+
+        interface OnRecipeClickListener {
+            fun onRecipeClick()
+        }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
             val inflater = LayoutInflater.from(parent.context)
@@ -144,7 +148,7 @@ class FoodFragment : Fragment() {
             Log.d("ADAPTER_UPDATE", "Adapter updated with ${recipes.size} recipes")
         }
 
-        class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        inner class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             private val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
             private val descriptionWebView: WebView = itemView.findViewById(R.id.descriptionWebView)
             private val recipeImageView: ImageView = itemView.findViewById(R.id.recipeImageView)
@@ -167,59 +171,41 @@ class FoodFragment : Fragment() {
 
                 // Add click listener to the FAB
                 fab.setOnClickListener {
-                    val options = arrayOf("Breakfast", "Lunch", "Dinner")
-                    var checkedItem = 0 // Default checked item
+                    // Add food data to the "Food" collection for the current date
+                    val foodData = hashMapOf(
+                        "id" to recipeId,
+                        "title" to titleTextView.text.toString(),
+                        "calories" to calories,
+                        "carbs" to carbs,
+                        "protein" to protein,
+                        "fat" to fat,
+                        "imageUrl" to recipeImage
+                    )
 
-                    val builder = AlertDialog.Builder(itemView.context)
-                    builder.setTitle("Select a meal")
-                        .setSingleChoiceItems(options, checkedItem) { _, which ->
-                            checkedItem = which
+                    val db = FirebaseFirestore.getInstance()
+                    val firebaseAuth = FirebaseAuth.getInstance()
+                    val userDocument = db.collection("Users")
+                        .document(firebaseAuth.currentUser?.email.toString())
+                    val mealsCollection = userDocument.collection("Food")
+                    val dateDocument = mealsCollection.document(formattedDateString) // Assuming formattedDateString is the current date
+
+                    // Add food data to the "Food" collection for the current date
+                    dateDocument.collection("Meals") // New collection for each date
+                        .add(foodData)
+                        .addOnSuccessListener { mealDocumentReference ->
+                            Log.d("FAB_CLICK", "Food data successfully added to Firestore!")
+
+                            // Update progress data in the progress document directly
+                            val progressDocument = userDocument.collection("Progress").document(formattedDateString)
+                            progressDocument.update("calories-today", FieldValue.increment(calories))
+                            progressDocument.update("carbs-today", FieldValue.increment(carbs))
+                            progressDocument.update("protein-today", FieldValue.increment(protein))
+                            progressDocument.update("fat-today", FieldValue.increment(fat))
+                            clickListener.onRecipeClick()
                         }
-                        .setPositiveButton("OK") { _, _ ->
-                            // Handle OK button click
-                            val selectedMeal = options[checkedItem]
-
-                            // Add food data to the "Food" collection for the current date
-                            val foodData = hashMapOf(
-                                "id" to recipeId,
-                                "title" to titleTextView.text.toString(),
-                                "calories" to calories,
-                                "carbs" to carbs,
-                                "protein" to protein,
-                                "fat" to fat,
-                                "meal" to selectedMeal,
-                                "imageUrl" to recipeImage
-                            )
-
-                            val db = FirebaseFirestore.getInstance()
-                            val firebaseAuth = FirebaseAuth.getInstance()
-                            val userDocument = db.collection("Users")
-                                .document(firebaseAuth.currentUser?.email.toString())
-                            val mealsCollection = userDocument.collection("Food")
-                            val dateDocument = mealsCollection.document(formattedDateString) // Assuming formattedDateString is the current date
-
-                            // Add food data to the "Food" collection for the current date
-                            dateDocument.collection("Meals") // New collection for each date
-                                .add(foodData)
-                                .addOnSuccessListener { mealDocumentReference ->
-                                    Log.d("FAB_CLICK", "Food data successfully added to Firestore!")
-
-                                    // Update progress data in the progress document directly
-                                    val progressDocument = userDocument.collection("Progress").document(formattedDateString)
-                                    progressDocument.update("calories-today", FieldValue.increment(calories))
-                                    progressDocument.update("carbs-today", FieldValue.increment(carbs))
-                                    progressDocument.update("protein-today", FieldValue.increment(protein))
-                                    progressDocument.update("fat-today", FieldValue.increment(fat))
-                                }
-                                .addOnFailureListener { e ->
-                                    Log.w("FAB_CLICK", "Error adding food data to Firestore", e)
-                                }
+                        .addOnFailureListener { e ->
+                            Log.w("FAB_CLICK", "Error adding food data to Firestore", e)
                         }
-                        .setNegativeButton("Cancel") { dialog, _ ->
-                            // Cancel button click
-                            dialog.dismiss()
-                        }
-                    builder.create().show()
                 }
             }
 
@@ -257,6 +243,11 @@ class FoodFragment : Fragment() {
                 adapter.setRecipes(recipes)
             }
         }
+    }
+
+    fun onRecipeClick() {
+        // Handle the click action here (show toast, perform action, etc.)
+        Toast.makeText(requireContext(), "Food added to Nutrition log.", Toast.LENGTH_SHORT).show()
     }
 
 

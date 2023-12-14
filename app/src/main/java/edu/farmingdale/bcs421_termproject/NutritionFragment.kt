@@ -9,10 +9,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import edu.farmingdale.bcs421_termproject.databinding.FragmentNutritionBinding
 import java.text.SimpleDateFormat
@@ -79,7 +81,6 @@ class NutritionFragment : Fragment(R.layout.fragment_nutrition) {
                         mealData["carbs"] as Double,
                         mealData["protein"] as Double,
                         mealData["fat"] as Double,
-                        mealData["meal"] as String,
                         mealData["imageUrl"] as String
                     )
                     mealList.add(mealItem)
@@ -132,7 +133,6 @@ class MealItemAdapter : RecyclerView.Adapter<MealItemAdapter.MealItemViewHolder>
         private val carbsTextView: TextView = itemView.findViewById(R.id.carbsTextView)
         private val proteinTextView: TextView = itemView.findViewById(R.id.proteinTextView)
         private val fatTextView: TextView = itemView.findViewById(R.id.fatTextView)
-        private val mealTextView: TextView = itemView.findViewById(R.id.mealTextView)
         private val mealImageView: ImageView = itemView.findViewById(R.id.mealImageView)
         private val mealDeleteButton: Button = itemView.findViewById(R.id.mealDeleteButton)
         private var mealItems: List<MealItem> = emptyList()
@@ -147,7 +147,6 @@ class MealItemAdapter : RecyclerView.Adapter<MealItemAdapter.MealItemViewHolder>
             carbsTextView.text = "Carbs: ${mealItem.carbs}"
             proteinTextView.text = "Protein: ${mealItem.protein}"
             fatTextView.text = "Fat: ${mealItem.fat}"
-            mealTextView.text = "Meal: ${mealItem.meal}"
 
             // Load image into ImageView using Glide
             Glide.with(itemView)
@@ -157,8 +156,7 @@ class MealItemAdapter : RecyclerView.Adapter<MealItemAdapter.MealItemViewHolder>
             // Set click listener for delete button
             mealDeleteButton.setOnClickListener {
                 // Call a function to delete the meal from Firestore
-                deleteMealFromFirestore(mealItem.id)
-            }
+                deleteMealFromFirestore(mealItem.id) }
         }
 
         private fun deleteMealFromFirestore(mealId: Int) {
@@ -179,7 +177,22 @@ class MealItemAdapter : RecyclerView.Adapter<MealItemAdapter.MealItemViewHolder>
                 .get()
                 .addOnSuccessListener { documents ->
                     for (document in documents) {
+                        // Get the amount of calories and macros for the meal that is about to get deleted
+                        val calories = document.get("calories").toString().toDouble().toLong()
+                        val protein = document.get("protein").toString().toDouble().toLong()
+                        val carbs = document.get("carbs").toString().toDouble().toLong()
+                        val fat = document.get("fat").toString().toDouble().toLong()
+                        // Delete the food document
                         document.reference.delete()
+                        // Update the users progress for the day by subtracting from their totals
+                        val progressDocument = db.collection("Users")
+                            .document(firebaseAuth.currentUser?.email.toString())
+                            .collection("Progress").document(formattedDateString)
+                        // Decrement the user's totals by the amount of calories and macros that was in the meal. We use a negative sign to decrement.
+                        progressDocument.update("calories-today", FieldValue.increment(-calories))
+                        progressDocument.update("carbs-today", FieldValue.increment(-carbs))
+                        progressDocument.update("protein-today", FieldValue.increment(-protein))
+                        progressDocument.update("fat-today", FieldValue.increment(-fat))
                         Log.d("DELETE_MEAL", "Meal successfully deleted from Firestore!")
 
                         // Remove the deleted item from the local mealItems list
@@ -204,6 +217,5 @@ data class MealItem(
     val carbs: Double,
     val protein: Double,
     val fat: Double,
-    val meal: String,
     val imageUrl: String // Add this if you have an image URL
 )

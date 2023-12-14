@@ -58,13 +58,13 @@ class BodyMeasurementsFragment : Fragment(R.layout.fragment_body_measurements) {
             weightEditText.setText(retrieveWeight())
         }
 
-        val submitButton = view.findViewById<Button>(R.id.submitButton)
-        submitButton.setOnClickListener{
-            val newWeight = weightEditText.text.toString()
-            lifecycleScope.launch(Dispatchers.IO) {
-                writeWeightInput(newWeight.toDouble())
-            }
-        }
+//        val submitButton = view.findViewById<Button>(R.id.submitButton)
+//        submitButton.setOnClickListener{
+//            val newWeight = weightEditText.text.toString()
+//            lifecycleScope.launch(Dispatchers.IO) {
+//                writeWeightInput(newWeight.toDouble())
+//            }
+//        }
         // Click listeners for the image views to make the edit texts editable (they shouldn't be at first).
         // Code to confirm changes and update Firestore.
         return view
