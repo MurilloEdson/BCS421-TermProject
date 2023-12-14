@@ -13,17 +13,23 @@ import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.records.WeightRecord
 import androidx.health.connect.client.units.Mass
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import edu.farmingdale.bcs421_termproject.HealthConnectManager
 import edu.farmingdale.bcs421_termproject.databinding.FragmentBodyMeasurementsBinding
 import edu.farmingdale.bcs421_termproject.databinding.FragmentPersonalInformationBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
 
 class BodyMeasurementsFragment : Fragment(R.layout.fragment_body_measurements) {
 
     private lateinit var binding: FragmentBodyMeasurementsBinding
+    lateinit var auth: FirebaseAuth
+    lateinit var db: FirebaseFirestore
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,14 +44,19 @@ class BodyMeasurementsFragment : Fragment(R.layout.fragment_body_measurements) {
                 commit()
             }
         }
-
-
+        
         // Code to pull the user's height and weight data from Firestore.
 
         val heightEditText = view.findViewById<EditText>(R.id.heightET)
         val weightEditText = view.findViewById<EditText>(R.id.weightET)
         val editHeight = view.findViewById<ImageView>(R.id.editHeight)
         val editWeight = view.findViewById<ImageView>(R.id.editWeight)
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
+        lifecycleScope.launch {
+            heightEditText.setText(retrieveHeight())
+            weightEditText.setText(retrieveWeight())
+        }
 
         val submitButton = view.findViewById<Button>(R.id.submitButton)
         submitButton.setOnClickListener{
@@ -80,5 +91,26 @@ class BodyMeasurementsFragment : Fragment(R.layout.fragment_body_measurements) {
             }
         }
     }
-
+    private suspend fun retrieveHeight(): String {
+        val field = "height"
+        val docRef = db.collection("Users").document(auth.currentUser?.email.toString())
+        return try {
+            val docSnapshot = docRef.get().await()
+            docSnapshot.getString(field)?.toString() ?: field
+        } catch (e: FirebaseFirestoreException) {
+            e.printStackTrace()
+            field
+        }
+    }
+    private suspend fun retrieveWeight(): String {
+        val field = "weight"
+        val docRef = db.collection("Users").document(auth.currentUser?.email.toString())
+        return try {
+            val docSnapshot = docRef.get().await()
+            docSnapshot.getString(field)?.toString() ?: field
+        } catch (e: FirebaseFirestoreException) {
+            e.printStackTrace()
+            field
+        }
+    }
 }

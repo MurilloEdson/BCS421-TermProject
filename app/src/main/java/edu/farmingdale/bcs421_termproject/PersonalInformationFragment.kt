@@ -9,11 +9,20 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
+import androidx.lifecycle.lifecycleScope
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import edu.farmingdale.bcs421_termproject.databinding.FragmentAccountBinding
 import edu.farmingdale.bcs421_termproject.databinding.FragmentPersonalInformationBinding
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 private lateinit var binding: FragmentPersonalInformationBinding
+
 class PersonalInformationFragment : Fragment(R.layout.fragment_personal_information) {
+    lateinit var auth: FirebaseAuth
+    lateinit var db: FirebaseFirestore
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,7 +38,12 @@ class PersonalInformationFragment : Fragment(R.layout.fragment_personal_informat
                 commit()
             }
         }
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
         val dobEditText = view.findViewById<EditText>(R.id.dobET)
+        lifecycleScope.launch {
+            dobEditText.setText(retrieveDob())
+        }
 
         // Drop down menu for selecting male/female
         val sexDropDownMenu: Spinner = view.findViewById(R.id.sexSpinner)
@@ -52,5 +66,15 @@ class PersonalInformationFragment : Fragment(R.layout.fragment_personal_informat
         // Code to confirm changes and update Firestore.
         return view
     }
-
+    private suspend fun retrieveDob(): String {
+        val field = "date-of-birth"
+        val docRef = db.collection("Users").document(auth.currentUser?.email.toString())
+        return try {
+            val docSnapshot = docRef.get().await()
+            docSnapshot.getString(field)?.toString() ?: field
+        } catch (e: FirebaseFirestoreException) {
+            e.printStackTrace()
+            field
+        }
+    }
 }
