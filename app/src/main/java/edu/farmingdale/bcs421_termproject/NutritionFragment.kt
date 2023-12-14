@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -79,7 +80,6 @@ class NutritionFragment : Fragment(R.layout.fragment_nutrition) {
                         mealData["carbs"] as Double,
                         mealData["protein"] as Double,
                         mealData["fat"] as Double,
-                        mealData["meal"] as String,
                         mealData["imageUrl"] as String
                     )
                     mealList.add(mealItem)
@@ -132,7 +132,6 @@ class MealItemAdapter : RecyclerView.Adapter<MealItemAdapter.MealItemViewHolder>
         private val carbsTextView: TextView = itemView.findViewById(R.id.carbsTextView)
         private val proteinTextView: TextView = itemView.findViewById(R.id.proteinTextView)
         private val fatTextView: TextView = itemView.findViewById(R.id.fatTextView)
-        private val mealTextView: TextView = itemView.findViewById(R.id.mealTextView)
         private val mealImageView: ImageView = itemView.findViewById(R.id.mealImageView)
         private val mealDeleteButton: Button = itemView.findViewById(R.id.mealDeleteButton)
         private var mealItems: List<MealItem> = emptyList()
@@ -147,7 +146,6 @@ class MealItemAdapter : RecyclerView.Adapter<MealItemAdapter.MealItemViewHolder>
             carbsTextView.text = "Carbs: ${mealItem.carbs}"
             proteinTextView.text = "Protein: ${mealItem.protein}"
             fatTextView.text = "Fat: ${mealItem.fat}"
-            mealTextView.text = "Meal: ${mealItem.meal}"
 
             // Load image into ImageView using Glide
             Glide.with(itemView)
@@ -204,6 +202,5 @@ data class MealItem(
     val carbs: Double,
     val protein: Double,
     val fat: Double,
-    val meal: String,
     val imageUrl: String // Add this if you have an image URL
 )

@@ -133,23 +133,25 @@
                 android:layout_margin="10dp"
                 android:background="@drawable/rounded_edittext"
                 android:hint="0g"
+                android:inputType="number"
                 android:padding="10dp"
                 android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="@id/guideline17"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/fatTV"
-                app:layout_constraintEnd_toEndOf="@id/guideline17"/>
+                app:layout_constraintTop_toBottomOf="@id/fatTV" />
 
             <Button
                 android:id="@+id/addFoodButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:backgroundTint="@color/bb_blue"
+                android:inputType="number"
                 android:text="Add Food"
                 android:textSize="20sp"
-                android:backgroundTint="@color/bb_blue"
-                app:layout_constraintTop_toBottomOf="@id/fatET"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_margin="10dp" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fatET" />
 
             <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline17"
