@@ -69,7 +69,7 @@ class FoodFragment : Fragment() {
         // Fetch and display random recipes of size n
         lifecycleScope.launch {
             val recipes = withContext(Dispatchers.IO) {
-                Spoonacular.getRandRecipes(1)
+                Spoonacular.getRandRecipes(3)
             }
             adapter.setRecipes(recipes)
         }
